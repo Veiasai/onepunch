@@ -1,19 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include <unordered_map>
-#include "CustomMdSpi.h"
+#include "Parameters.h"
 #include "TickToKlineHelper.h"
-
-// ---- 全局参数声明 ---- //
-extern CThostFtdcMdApi *g_pMdUserApi;            // 行情指针
-extern char gMdFrontAddr[];                      // 模拟行情前置地址
-extern TThostFtdcBrokerIDType gBrokerID;         // 模拟经纪商代码
-extern TThostFtdcInvestorIDType gInvesterID;     // 投资者账户名
-extern TThostFtdcPasswordType gInvesterPassword; // 投资者密码
-extern char *g_pInstrumentID[];                  // 行情合约代码列表，中、上、大、郑交易所各选一种
-extern int instrumentNum;                        // 行情合约订阅数量
-extern std::unordered_map<std::string, TickToKlineHelper> g_KlineHash; // k线存储表
 
 // ---- ctp_api回调函数 ---- //
 // 连接成功应答
@@ -27,7 +16,7 @@ void CustomMdSpi::OnFrontConnected()
 	strcpy(loginReq.UserID, gInvesterID);
 	strcpy(loginReq.Password, gInvesterPassword);
 	static int requestID = 0; // 请求编号
-	
+
 	int rt = g_pMdUserApi->ReqUserLogin(&loginReq, requestID);
 	if (!rt)
 		std::cout << ">>>>>>发送登录请求成功" << std::endl;
@@ -51,9 +40,9 @@ void CustomMdSpi::OnHeartBeatWarning(int nTimeLapse)
 
 // 登录应答
 void CustomMdSpi::OnRspUserLogin(
-	CThostFtdcRspUserLoginField *pRspUserLogin, 
-	CThostFtdcRspInfoField *pRspInfo, 
-	int nRequestID, 
+	CThostFtdcRspUserLoginField *pRspUserLogin,
+	CThostFtdcRspInfoField *pRspInfo,
+	int nRequestID,
 	bool bIsLast)
 {
 	bool bResult = pRspInfo && (pRspInfo->ErrorID != 0);
@@ -78,8 +67,8 @@ void CustomMdSpi::OnRspUserLogin(
 // 登出应答
 void CustomMdSpi::OnRspUserLogout(
 	CThostFtdcUserLogoutField *pUserLogout,
-	CThostFtdcRspInfoField *pRspInfo, 
-	int nRequestID, 
+	CThostFtdcRspInfoField *pRspInfo,
+	int nRequestID,
 	bool bIsLast)
 {
 	bool bResult = pRspInfo && (pRspInfo->ErrorID != 0);
@@ -103,9 +92,9 @@ void CustomMdSpi::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, b
 
 // 订阅行情应答
 void CustomMdSpi::OnRspSubMarketData(
-	CThostFtdcSpecificInstrumentField *pSpecificInstrument, 
-	CThostFtdcRspInfoField *pRspInfo, 
-	int nRequestID, 
+	CThostFtdcSpecificInstrumentField *pSpecificInstrument,
+	CThostFtdcRspInfoField *pRspInfo,
+	int nRequestID,
 	bool bIsLast)
 {
 	bool bResult = pRspInfo && (pRspInfo->ErrorID != 0);
@@ -137,9 +126,9 @@ void CustomMdSpi::OnRspSubMarketData(
 
 // 取消订阅行情应答
 void CustomMdSpi::OnRspUnSubMarketData(
-	CThostFtdcSpecificInstrumentField *pSpecificInstrument, 
+	CThostFtdcSpecificInstrumentField *pSpecificInstrument,
 	CThostFtdcRspInfoField *pRspInfo,
-	int nRequestID, 
+	int nRequestID,
 	bool bIsLast)
 {
 	bool bResult = pRspInfo && (pRspInfo->ErrorID != 0);
@@ -197,16 +186,16 @@ void CustomMdSpi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMar
 	// char filePath[100] = {'\0'};
 	// sprintf(filePath, "%s_market_data.csv", pDepthMarketData->InstrumentID);
 	// std::ofstream outFile;
-	// outFile.open(filePath, std::ios::app); // 文件追加写入 
-	// outFile << pDepthMarketData->InstrumentID << "," 
-	// 	<< pDepthMarketData->UpdateTime << "." << pDepthMarketData->UpdateMillisec << "," 
-	// 	<< pDepthMarketData->LastPrice << "," 
-	// 	<< pDepthMarketData->Volume << "," 
-	// 	<< pDepthMarketData->BidPrice1 << "," 
-	// 	<< pDepthMarketData->BidVolume1 << "," 
-	// 	<< pDepthMarketData->AskPrice1 << "," 
-	// 	<< pDepthMarketData->AskVolume1 << "," 
-	// 	<< pDepthMarketData->OpenInterest << "," 
+	// outFile.open(filePath, std::ios::app); // 文件追加写入
+	// outFile << pDepthMarketData->InstrumentID << ","
+	// 	<< pDepthMarketData->UpdateTime << "." << pDepthMarketData->UpdateMillisec << ","
+	// 	<< pDepthMarketData->LastPrice << ","
+	// 	<< pDepthMarketData->Volume << ","
+	// 	<< pDepthMarketData->BidPrice1 << ","
+	// 	<< pDepthMarketData->BidVolume1 << ","
+	// 	<< pDepthMarketData->AskPrice1 << ","
+	// 	<< pDepthMarketData->AskVolume1 << ","
+	// 	<< pDepthMarketData->OpenInterest << ","
 	// 	<< pDepthMarketData->Turnover << std::endl;
 	// outFile.close();
 
@@ -215,7 +204,6 @@ void CustomMdSpi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMar
 	// if (g_KlineHash.find(instrumentKey) == g_KlineHash.end())
 	// 	g_KlineHash[instrumentKey] = TickToKlineHelper();
 	// g_KlineHash[instrumentKey].KLineFromRealtimeData(pDepthMarketData);
-
 
 	// 取消订阅行情
 	//int rt = g_pMdUserApi->UnSubscribeMarketData(g_pInstrumentID, instrumentNum);

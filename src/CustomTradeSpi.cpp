@@ -2,20 +2,9 @@
 #include <time.h>
 #include <thread>
 #include <chrono>
-#include "CustomTradeSpi.h"
+#include "Parameters.h"
 #include "StrategyTrade.h"
 #include <cstring>
-
-// ---- 全局参数声明 ---- //
-extern TThostFtdcExchangeIDType gExchangeID;
-extern TThostFtdcBrokerIDType gBrokerID;                      // 模拟经纪商代码
-extern TThostFtdcInvestorIDType gInvesterID;                  // 投资者账户名
-extern TThostFtdcPasswordType gInvesterPassword;              // 投资者密码
-extern CThostFtdcTraderApi *g_pTradeUserApi;                  // 交易指针
-extern char gTradeFrontAddr[];                                // 模拟交易前置地址
-extern TThostFtdcInstrumentIDType g_pTradeInstrumentID;       // 所交易的合约代码
-extern TThostFtdcDirectionType gTradeDirection;               // 买卖方向
-extern TThostFtdcPriceType gLimitPrice;                       // 交易价格
 
 // 会话参数
 TThostFtdcFrontIDType	trade_front_id;	//前置编号
