@@ -1,0 +1,1 @@
+configure_file(ctpconfig.cfg ctpconfig.cfg)

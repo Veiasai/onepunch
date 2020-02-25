@@ -1,13 +1,9 @@
 #include <vector>
 #include <iostream>
-#include <string>
-#include <unordered_map>
 #include <thread>
 #include <mutex>
 #include "StrategyTrade.h"
-#include "CustomTradeSpi.h"
-
-extern std::unordered_map<std::string, TickToKlineHelper> g_KlineHash;
+#include "Parameters.h"
 
 // 线程互斥量
 std::mutex marketDataMutex;
