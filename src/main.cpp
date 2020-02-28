@@ -43,9 +43,9 @@ int main()
 	delete pMdUserSpi;
 	g_pMdUserApi->Release();
 
-	// g_pTradeUserApi->Join();
-	// delete pTradeSpi;
-	// g_pTradeUserApi->Release();
+	g_pTradeUserApi->Join();
+	delete pTradeSpi;
+	g_pTradeUserApi->Release();
 
 	// 转换本地k线数据
 	// TickToKlineHelper tickToKlineHelper;
