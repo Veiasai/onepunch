@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <map>
 #include <ctime>
 
 namespace simulator
@@ -8,10 +9,10 @@ namespace simulator
 class TradeInfo
 {
 private:
-    const double BASEPRICE = 800;
-    long double BASEVOLUME = 5000;
-    const double BASEDELTA = 3;
-    long double BASEDELTAVOLUME = 100;
+    static constexpr double BASEPRICE = 800;
+    static constexpr long BASEVOLUME = 5000;
+    static constexpr double BASEDELTA = 3;
+    static constexpr long BASEDELTAVOLUME = 100;
 
 public:
     std::string instrumentId; // 合约ID
@@ -23,21 +24,21 @@ public:
     double AskPrice1;         // 申卖价1
     long AskVolume1;          // 申卖量1
 
-    TradeInfo(std::string instrumentId) : instrumentId(instrumentId), UpdateTime(time(NULL)), LastPrice(BASEPRICE), Volume(BASEVOLUME), BidPrice1(BASEPRICE - BASEDELTA), BidVolume1(BASEDELTAVOLUME), AskPrice1(BASEPRICE + BASEDELTA), AskVolume1(BASEDELTAVOLUME) {}
+    TradeInfo(const std::string &instrumentId) : instrumentId(instrumentId), UpdateTime(time(NULL)), LastPrice(BASEPRICE), Volume(BASEVOLUME), BidPrice1(BASEPRICE - BASEDELTA), BidVolume1(BASEDELTAVOLUME), AskPrice1(BASEPRICE + BASEDELTA), AskVolume1(BASEDELTAVOLUME) {}
 };
 
 class UserInfo
 {
 private:
-    const double BASEAVAILABLE = 100000000;
+    static constexpr double BASEAVAILABLE = 100000000;
 
 public:
-    std::string UserID; // 用户ID
-    long OpenVolume;    // 持仓量
-    double Available;   // 可用资金
-    double CloseProfit; // 平仓盈亏
+    std::string UserID;                     // 用户ID
+    std::map<std::string, long> OpenVolume; // 各股持仓量
+    double Available;                       // 可用资金
+    double CloseProfit;                     // 平仓盈亏
 
-    UserInfo(std::string userid) : UserID(userid), OpenVolume(0), Available(BASEAVAILABLE), CloseProfit(0) {}
+    UserInfo(const std::string &userid) : UserID(userid), OpenVolume(), Available(BASEAVAILABLE), CloseProfit(0) {}
 };
 
 } // namespace simulator

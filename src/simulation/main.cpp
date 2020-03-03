@@ -1,4 +1,5 @@
 #include "MarketSimulator.h"
+#include "Strategy.h"
 #include <thread>
 
 using namespace simulator;
@@ -8,6 +9,10 @@ int main()
 {
     string instrumentId = "i2005";
     Market one = Market(instrumentId);
+
+    BaseStrategy bs1 = BaseStrategy("zwq");
+    OptionIndex optionIndex = OptionIndex();
+    optionIndex.addInstrument(instrumentId);
 
     thread t1(bind(&Market::run, &one));
 
@@ -22,13 +27,14 @@ int main()
         thisTime = time(0);
         if (thisTime - lastTime > elapsed)
         {
-            one.getTradeInfo();
+            TradeInfo ti = one.getTradeInfo();
+            optionIndex.updateInstrument(instrumentId, ti);
+
+            bs1.onUnderlyingChanged(instrumentId, optionIndex);
 
             lastTime = thisTime;
 
             count++;
-            if (count == 5)
-                break;
         }
     }
 

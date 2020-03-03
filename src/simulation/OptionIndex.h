@@ -18,11 +18,11 @@ public:
     explicit OptionIndex(const std::map<std::string, std::vector<TradeInfo>> &iMap) : instrumentMap(iMap){};
 
     // update
-    inline void addInstrument(const std::string &instrumentId);
-    inline void updateInstrument(const std::string &instrumentId, const TradeInfo &tradeinfo);
+    inline void addInstrument(const std::string &instrumentId) { instrumentMap[instrumentId] = std::vector<TradeInfo>(); }
+    void updateInstrument(const std::string &instrumentId, TradeInfo tradeinfo);
 
     // get
     std::vector<std::string> getAllInstruments() const;
-    inline std::vector<TradeInfo> getTradeInfoList(const std::string &instrumentId) const;
+    inline std::vector<TradeInfo> getTradeInfoList(const std::string &instrumentId) const { return instrumentMap.at(instrumentId); };
 };
 } // namespace simulator
