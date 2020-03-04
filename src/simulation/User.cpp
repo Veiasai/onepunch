@@ -22,10 +22,13 @@ bool User::buy(const std::string &instrumentId, long vol, double price)
     else
         userinfo.OpenVolume[instrumentId] += vol;
 
+#ifdef DEBUG
     std::cout << userinfo.UserID << " buy " << instrumentId << std::endl
               << "at price: " << price << " vol: " << vol << std::endl;
 
     showInfo();
+
+#endif
 
     return true;
 }
@@ -43,11 +46,12 @@ bool User::sell(const std::string &instrumentId, long vol, double price)
     userinfo.Available += price * vol;
     userinfo.OpenVolume[instrumentId] -= vol;
 
+#ifdef DEBUG
     std::cout << userinfo.UserID << " sell " << instrumentId << std::endl
               << "at price: " << price << " vol: " << vol << std::endl;
 
     showInfo();
-
+#endif
     return true;
 }
 
