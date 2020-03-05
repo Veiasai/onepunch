@@ -37,7 +37,7 @@ void Market::run()
     }
 }
 
-void Market::getTradeInfo()
+TradeInfo Market::getTradeInfo()
 {
 
     std::tm *ptm = std::localtime(&tradeinfo.UpdateTime);
@@ -53,5 +53,7 @@ void Market::getTradeInfo()
               << "申买量1: " << tradeinfo.BidVolume1 << std::endl
               << "申卖价1: " << tradeinfo.AskPrice1 << std::endl
               << "申卖量1: " << tradeinfo.AskVolume1 << std::endl;
+
+    return tradeinfo;
 }
 } // namespace simulator

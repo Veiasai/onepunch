@@ -18,7 +18,7 @@ public:
     // update tradeinfo per 3 seconds
     void run();
     // get latest tradeinfo
-    void getTradeInfo();
+    TradeInfo getTradeInfo();
     // stop market running
     inline void stop() { running = false; };
 
