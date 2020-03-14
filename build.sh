@@ -3,8 +3,10 @@
 if [[ ! -d "build" ]]
 then 
     mkdir build
+    mkdir build/debug
+    mkdir build/release
 fi
 
-cd build
-cmake ../src
-make -j4
+cmake -DCMAKE_BUILD_TYPE=Debug -S src -B build/debug
+
+cmake -DCMAKE_BUILD_TYPE=Release -S src -B build/release
