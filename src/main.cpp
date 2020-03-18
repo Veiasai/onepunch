@@ -7,10 +7,10 @@
 #include <thread>
 
 using namespace std;
-using namespace simulator;
 
 void CTPMain()
 {
+	
 	// 初始化行情线程
 	cout << "初始化行情..." << endl;
 	g_pMdUserApi = CThostFtdcMdApi::CreateFtdcMdApi(); // 创建行情实例
@@ -49,17 +49,18 @@ void CTPMain()
 
 void simulatorMain()
 {
-	TThostFtdcInstrumentIDType instrumentId = "i2005";
-	Market one = Market(instrumentId);
 
-	User *user = new User("zwq");
-	OptionIndex *optionIndex = new OptionIndex();
+	TThostFtdcInstrumentIDType instrumentId = "i2005";
+	simulator::Market one = simulator::Market(instrumentId);
+
+	simulator::User *user = new simulator::User("zwq");
+	simulator::OptionIndex *optionIndex = new simulator::OptionIndex();
 	optionIndex->addInstrument(string(instrumentId));
 
 	TradeState *ts = new SimulatorState(user, optionIndex);
 	Strategy *s1 = new BaseStrategy(ts, instrumentId);
 
-	thread t1(bind(&Market::run, &one));
+	thread t1(bind(&simulator::Market::run, &one));
 
 	// 每三秒去一次信息，取得五次信息就结束程序
 	int lastTime = time(0);
@@ -72,7 +73,7 @@ void simulatorMain()
 		thisTime = time(0);
 		if (thisTime - lastTime > elapsed)
 		{
-			TradeInfo ti = one.getTradeInfo();
+			simulator::TradeInfo ti = one.getTradeInfo();
 			optionIndex->updateInstrument(instrumentId, ti);
 
 			s1->doStrategy();
@@ -90,12 +91,6 @@ void simulatorMain()
 
 int main()
 {
-	// 账号密码
-	// cout << "请输入账号： ";
-	// scanf("%s", gInvesterID);
-	// cout << "请输入密码： ";
-	// scanf("%s", gInvesterPassword);
-
 	// 初始化全局参数配置
 	cout << "初始化参数..." << endl;
 	if (initConfig())

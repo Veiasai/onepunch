@@ -7,6 +7,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 add_subdirectory(CTP_API)
 
+include_directories(simulation)
+link_directories(simulation)
+add_subdirectory(simulation)
+
 AUX_SOURCE_DIRECTORY(. DIR_SRCS)
 
 ADD_EXECUTABLE(ctp ${DIR_SRCS})
@@ -14,7 +18,7 @@ ADD_EXECUTABLE(ctp ${DIR_SRCS})
 TARGET_LINK_LIBRARIES(ctp ctp_exec_lib_${CTP_LIB_VERSION} ctp_info_lib_${CTP_LIB_VERSION})
 
 add_subdirectory(config)
-add_subdirectory(simulation)
 
+target_link_libraries(ctp simulation)
 target_link_libraries(ctp libconfig.so)
 target_link_libraries(ctp libconfig++.so)

@@ -27,6 +27,9 @@ TThostFtdcInstrumentIDType g_pTradeInstrumentID = "";        // 所交易的合�
 TThostFtdcDirectionType gTradeDirection = THOST_FTDC_D_Sell; // 买卖方向
 TThostFtdcPriceType gLimitPrice = 700;                       // 交易价格
 
+// 1:CTP  2:simulator
+int mode = 2;
+
 int initConfig()
 {
 
@@ -76,7 +79,7 @@ int initConfig()
 
     // 运行模式
     // 1: CTP ; 2: simulator
-    int mode = root["mode"];
+    mode = root["mode"];
 
     return EXIT_SUCCESS;
 }

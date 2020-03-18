@@ -5,20 +5,16 @@
 #include "Timer.h"
 #include <iostream>
 
-// 全局变量
-// 1：CTP 2：simulator
-extern int mode;
-
 // 线程互斥量
-std::mutex marketDataMutex;
+std::mutex DataMutex;
 
 void BaseStrategy::doStrategy()
 {
     // timer start
     const auto start = timer::rdtscp_clock::now();
-    
+
     // 加锁
-    std::lock_guard<std::mutex> lk(marketDataMutex);
+    std::lock_guard<std::mutex> lk(DataMutex);
 
     if (mode == 1)
     {
