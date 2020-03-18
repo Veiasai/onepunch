@@ -74,5 +74,9 @@ int initConfig()
     strcpy(gTradeFrontAddr, gTradeFrontAddr_c.c_str());
     strcpy(g_pTradeInstrumentID, g_pTradeInstrumentID_c.c_str());
 
+    // 运行模式
+    // 1: CTP ; 2: simulator
+    int mode = root["mode"];
+
     return EXIT_SUCCESS;
 }

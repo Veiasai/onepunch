@@ -179,12 +179,8 @@ void CustomTradeSpi::OnRspQryInvestorPosition(
 		// 策略交易
 		std::cout << "=====开始进入策略交易=====" << std::endl;
 		while (loginFlag){
-			const auto start=timer::rdtscp_clock::now();
 			// reqOrderInsert(g_pTradeInstrumentID, 668, 1, THOST_FTDC_D_Buy);
 			StrategyCheckAndTrade(g_pTradeInstrumentID, this);
-			const auto duration=timer::rdtscp_clock::now()-start;
-			ulong count = duration.count();
-			// std::cout << "It took " << count / 2.099996 << " (ns)" << std::endl;
 		}
 		
 		StrategyCheckAndTrade(g_pTradeInstrumentID, this);
