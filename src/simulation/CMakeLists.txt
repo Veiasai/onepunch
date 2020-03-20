@@ -5,6 +5,9 @@ set(CMAKE_BUILD_TYPE "Debug")
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+
 AUX_SOURCE_DIRECTORY(. DIR)
 
-ADD_EXECUTABLE(simulation ${DIR})
+set(simulation ${DIR})
+
+add_library(simulation ${simulation})

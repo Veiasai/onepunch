@@ -3,9 +3,9 @@
 #include <thread>
 #include <chrono>
 #include "Parameters.h"
-#include "StrategyTrade.h"
 #include <cstring>
 #include "Timer.h"
+#include "Strategy.h"
 
 // 会话参数
 TThostFtdcFrontIDType	trade_front_id;	//前置编号
@@ -178,16 +178,15 @@ void CustomTradeSpi::OnRspQryInvestorPosition(
 
 		// 策略交易
 		std::cout << "=====开始进入策略交易=====" << std::endl;
-		while (loginFlag){
-			const auto start=timer::rdtscp_clock::now();
+		if (loginFlag){
 			// reqOrderInsert(g_pTradeInstrumentID, 668, 1, THOST_FTDC_D_Buy);
-			StrategyCheckAndTrade(g_pTradeInstrumentID, this);
-			const auto duration=timer::rdtscp_clock::now()-start;
-			ulong count = duration.count();
-			// std::cout << "It took " << count / 2.099996 << " (ns)" << std::endl;
+			// StrategyCheckAndTrade(g_pTradeInstrumentID, this);
+			TradeState* ts1 = new CTPState(this);
+			Strategy * s2 = new BaseStrategy(ts1,pInvestorPosition->InstrumentID);
+			s2->doStrategy();
 		}
 		
-		StrategyCheckAndTrade(g_pTradeInstrumentID, this);
+		// StrategyCheckAndTrade(g_pTradeInstrumentID, this);
 	}
 }
 

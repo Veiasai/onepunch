@@ -28,5 +28,9 @@ extern TThostFtdcInstrumentIDType g_pTradeInstrumentID; // 所交易的合约代
 extern TThostFtdcDirectionType gTradeDirection;         // 买卖方向
 extern TThostFtdcPriceType gLimitPrice;                 // 交易价格
 
+// 运行模式
+// 1: CTP ; 2: simulator
+extern int mode;
+
 // 初始化配置函数
 int initConfig();
