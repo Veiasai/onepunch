@@ -2,8 +2,7 @@
 #include <mutex>
 #include <iostream>
 
-namespace simulator
-{
+namespace sail { namespace onepunch { namespace simulator {
 
 std::mutex UserDataMutex;
 
@@ -63,4 +62,5 @@ void User::showInfo()
     std::cout << "Available: " << userinfo.Available << std::endl;
     //   << "CloseProfit: " << userinfo.CloseProfit << std::endl;
 }
-} // namespace simulator
+
+}}} // namespace simulator

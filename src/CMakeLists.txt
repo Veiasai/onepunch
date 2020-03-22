@@ -7,8 +7,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 add_subdirectory(CTP_API)
 
-include_directories(simulation)
-link_directories(simulation)
 add_subdirectory(simulation)
 
 AUX_SOURCE_DIRECTORY(. DIR_SRCS)

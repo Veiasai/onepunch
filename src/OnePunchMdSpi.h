@@ -1,12 +1,40 @@
 #pragma once
 // ---- 派生的行情类 ---- //
 #include <vector>
+#include <unordered_map>
 #include "CTP_API/inc/ThostFtdcMdApi.h"
- 
-class CustomMdSpi: public CThostFtdcMdSpi
+#include "TickToKlineHelper.h"
+
+namespace sail { namespace onepunch { namespace ctp {
+
+class OnePunchMdSpi: public CThostFtdcMdSpi
 {
+private:
+	char* gBrokerID;         // 模拟经纪商代码
+	char* gInvesterID;     // 投资者账户名
+	char* gInvesterPassword; // 投资者密码
+	char* gExchangeID;
+	char* gMdFrontAddr;                                  // 模拟行情前置地址
+    char** g_pInstrumentID;                                        // 行情合约代码列表，中、上、大、郑交易所各选一种
+    int instrumentNum;                                       // 行情合约订阅数量
+
+    std::unordered_map<std::string, TickToKlineHelper> & g_KlineHash; // 不同合约的k线存储表
+	CThostFtdcMdApi * g_pMdUserApi;
 	// ---- 继承自CTP父类的回调接口并实现 ---- //
 public:
+	OnePunchMdSpi(std::unordered_map<std::string, TickToKlineHelper> & g_KlineHash,
+		char* gBrokerID,         // 模拟经纪商代码
+		char* gInvesterID,     // 投资者账户名
+		char* gInvesterPassword, // 投资者密码
+		char* gExchangeID,
+		char* gMdFrontAddr,
+		char** g_pInstrumentID,
+		int instrumentNum) : g_KlineHash(g_KlineHash), gBrokerID(gBrokerID), 
+			gInvesterID(gInvesterID), gInvesterPassword(gInvesterPassword),
+			gExchangeID(gExchangeID), gMdFrontAddr(gMdFrontAddr), g_pInstrumentID(g_pInstrumentID),
+			instrumentNum(instrumentNum) {};
+
+	void setMdUserApi(CThostFtdcMdApi * g_pMdUserApi) {this->g_pMdUserApi = g_pMdUserApi;};
 	///当客户端与交易后台建立起通信连接时（还未登录前），该方法被调用。
 	void OnFrontConnected();
  
@@ -51,3 +79,5 @@ public:
 	void OnRtnForQuoteRsp(CThostFtdcForQuoteRspField *pForQuoteRsp);
     
 };
+
+}}}

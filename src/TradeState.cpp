@@ -1,8 +1,10 @@
 #include "TradeState.h"
 
+namespace sail { namespace onepunch { namespace ctp {
+
 void CTPState::reqOrderInsert(TThostFtdcInstrumentIDType instrumentID, TThostFtdcPriceType price, TThostFtdcVolumeType volume, TThostFtdcDirectionType direction)
 {
-    customTradeSpi->reqOrderInsert(instrumentID, price, volume, direction);
+    onepunchTradeSpi->reqOrderInsert(instrumentID, price, volume, direction);
 }
 
 void SimulatorState::reqOrderInsert(TThostFtdcInstrumentIDType instrumentID, TThostFtdcPriceType price, TThostFtdcVolumeType volume, TThostFtdcDirectionType direction)
@@ -12,3 +14,5 @@ void SimulatorState::reqOrderInsert(TThostFtdcInstrumentIDType instrumentID, TTh
     else
         user->sell(std::string(instrumentID), volume, price);
 }
+
+}}}

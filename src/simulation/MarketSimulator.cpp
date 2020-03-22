@@ -4,8 +4,8 @@
 #include <iostream>
 #include <thread>
 
-namespace simulator
-{
+namespace sail { namespace onepunch { namespace simulator {
+
 void Market::run()
 {
     running = true;
@@ -56,4 +56,5 @@ TradeInfo Market::getTradeInfo()
 
     return tradeinfo;
 }
-} // namespace simulator
+
+}}} // namespace simulator

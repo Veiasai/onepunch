@@ -4,8 +4,8 @@
 #include <vector>
 #include "Parameter.h"
 
-namespace simulator
-{
+namespace sail { namespace onepunch { namespace simulator {
+
 class OptionIndex
 {
 protected:
@@ -25,4 +25,5 @@ public:
     std::vector<std::string> getAllInstruments() const;
     inline std::vector<TradeInfo> getTradeInfoList(const std::string &instrumentId) const { return instrumentMap.at(instrumentId); };
 };
-} // namespace simulator
+
+}}} // namespace simulator

@@ -2,9 +2,11 @@
 
 #include "CTP_API/inc/ThostFtdcUserApiStruct.h"
 #include "TickToKlineHelper.h"
-#include "CustomTradeSpi.h"
+#include "OnePunchTradeSpi.h"
 #include "simulation/OptionIndex.h"
 #include "simulation/User.h"
+
+namespace sail { namespace onepunch { namespace ctp {
 
 class TradeState
 {
@@ -18,7 +20,7 @@ public:
 class CTPState : public TradeState
 {
 public:
-    CTPState(CustomTradeSpi *customTradeSpi) : customTradeSpi(customTradeSpi) {}
+    CTPState(OnePunchTradeSpi *onepunchTradeSpi) : onepunchTradeSpi(onepunchTradeSpi) {}
 
     virtual void reqOrderInsert(TThostFtdcInstrumentIDType instrumentID, TThostFtdcPriceType price, TThostFtdcVolumeType volume, TThostFtdcDirectionType direction) override;
 
@@ -28,7 +30,7 @@ public:
     }
 
 private:
-    CustomTradeSpi *customTradeSpi;
+    OnePunchTradeSpi *onepunchTradeSpi;
 };
 
 class SimulatorState : public TradeState
@@ -47,3 +49,5 @@ private:
     simulator::User *user;
     simulator::OptionIndex *optionIndex;
 };
+
+}}}

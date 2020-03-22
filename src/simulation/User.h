@@ -2,8 +2,8 @@
 
 #include "Parameter.h"
 
-namespace simulator
-{
+namespace sail { namespace onepunch { namespace simulator {
+
 class User
 {
 private:
@@ -17,4 +17,4 @@ public:
     void showInfo();
 };
 
-} // namespace simulator
+}}} // namespace simulator

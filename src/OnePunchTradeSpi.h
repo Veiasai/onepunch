@@ -1,8 +1,12 @@
 #pragma once
 // ---- 派生的交易类 ---- //
 #include "CTP_API/inc/ThostFtdcTraderApi.h"
+#include <unordered_map>
+#include "TickToKlineHelper.h"
 
-class CustomTradeSpi : public CThostFtdcTraderSpi
+namespace sail { namespace onepunch { namespace ctp {
+
+class OnePunchTradeSpi : public CThostFtdcTraderSpi
 {
 // ---- ctp_api部分回调接口 ---- //
 public:
@@ -58,6 +62,31 @@ public:
 		TThostFtdcPriceType price,
 		TThostFtdcVolumeType volume,
 		TThostFtdcDirectionType direction); // 个性化报单录入，外部调用
+	
+	OnePunchTradeSpi(std::unordered_map<std::string, TickToKlineHelper> & g_KlineHash,
+		char* gBrokerID,         // 模拟经纪商代码
+		char* gInvesterID,     // 投资者账户名
+		char* gInvesterPassword, // 投资者密码
+		char* gExchangeID,
+		char* g_pTradeInstrumentID) : g_KlineHash(g_KlineHash), gBrokerID(gBrokerID), 
+			gInvesterID(gInvesterID), gInvesterPassword(gInvesterPassword),
+			gExchangeID(gExchangeID), g_pTradeInstrumentID(g_pTradeInstrumentID) {};
+
+	void setTradeUserApi(CThostFtdcTraderApi * g_pTradeUserApi) {this->g_pTradeUserApi = g_pTradeUserApi;};
+private:
+	char* gBrokerID;         // 模拟经纪商代码
+	char* gInvesterID;     // 投资者账户名
+	char* gInvesterPassword; // 投资者密码
+	char* gExchangeID;
+	char* g_pTradeInstrumentID;
+	// 会话参数
+	TThostFtdcFrontIDType	trade_front_id;	//前置编号
+	TThostFtdcSessionIDType	session_id;	//会话编号
+	TThostFtdcOrderRefType	order_ref;	//报单引用
+	time_t lOrderTime;
+	time_t lOrderOkTime;
+	std::unordered_map<std::string, TickToKlineHelper> & g_KlineHash;
+	CThostFtdcTraderApi * g_pTradeUserApi;
 private:
 	void changePwd();
 	void reqUserAuth(); // 认证请求
@@ -74,3 +103,5 @@ private:
 	bool isMyOrder(CThostFtdcOrderField *pOrder); // 是否我的报单回报
 	bool isTradingOrder(CThostFtdcOrderField *pOrder); // 是否正在交易的报单
 };
+
+}}}

@@ -6,6 +6,8 @@
 #include "CTP_API/inc/ThostFtdcUserApiStruct.h"
 #include "TickToKlineHelper.h"
 
+namespace sail { namespace onepunch {
+
 const int kDataLineNum = 2 * 60; // 1分钟k线所需行数(末尾不足一分钟的舍去了)
 
 void TickToKlineHelper::KLineFromLocalData(const std::string &sFilePath, const std::string &dFilePath)
@@ -102,3 +104,10 @@ void TickToKlineHelper::KLineFromRealtimeData(CThostFtdcDepthMarketDataField *pD
 		m_volumeVec.clear();
 	}
 }
+
+void TickToKlineHelper::PushData(const KLineDataType & k_line_data)
+{
+	m_KLineDataArray.push_back(k_line_data); // 此处可以存到内存
+}
+
+}}

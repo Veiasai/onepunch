@@ -1,7 +1,7 @@
 #include "OptionIndex.h"
 
-namespace simulator
-{
+namespace sail { namespace onepunch { namespace simulator {
+
 // update
 void OptionIndex::updateInstrument(const std::string &instrumentId, TradeInfo tradeinfo)
 {
@@ -20,4 +20,5 @@ std::vector<std::string> OptionIndex::getAllInstruments() const
 
     return ret;
 }
-} // namespace simulator
+
+}}} // namespace simulator
