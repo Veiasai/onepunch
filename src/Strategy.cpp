@@ -5,10 +5,12 @@
 #include "Timer.h"
 #include <iostream>
 
+namespace sail { namespace onepunch { namespace strategy {
+
 // 线程互斥量
 std::mutex DataMutex;
 
-void BaseStrategy::doStrategy()
+void BaseStrategy::doStrategy(const std::unordered_map<std::string, TickToKlineHelper> & g_KlineHash)
 {
     // timer start
     const auto start = timer::rdtscp_clock::now();
@@ -16,25 +18,14 @@ void BaseStrategy::doStrategy()
     // 加锁
     std::lock_guard<std::mutex> lk(DataMutex);
 
-    if (mode == 1)
-    {
-        //CTP
-        TickToKlineHelper tickToKlineObject = g_KlineHash.at(std::string(instrumentID));
-        // 策略
-        std::vector<double> priceVec = tickToKlineObject.m_priceVec;
+    //CTP
+    const TickToKlineHelper & tickToKlineObject = g_KlineHash.at(std::string(instrumentID));
+    // 策略
+    std::vector<double> priceVec = tickToKlineObject.m_priceVec;
 
-        int len = priceVec.size();
-        if (len > 3)
-            last3Stategy(priceVec[len - 1], priceVec[len - 2], priceVec[len - 3], 1);
-    }
-    else
-    {
-        // simulator
-        std::vector<simulator::TradeInfo> list = (state->getOptionIndex())->getTradeInfoList(std::string(instrumentID));
-
-        int ssize = list.size();
-        if (ssize > 3)
-            last3Stategy(list[ssize - 1].LastPrice, list[ssize - 2].LastPrice, list[ssize - 3].LastPrice, 1);
+    int len = priceVec.size();
+    if (len > 3) {
+        last3Stategy(priceVec[len - 1], priceVec[len - 2], priceVec[len - 3], 1);
     }
 
     // timer end
@@ -50,3 +41,5 @@ inline void BaseStrategy::last3Stategy(double price1, double price2, double pric
     else if (price1 < price2 && price2 < price3)
         state->reqOrderInsert(instrumentID, price1, volume, THOST_FTDC_D_Sell);
 }
+
+}}}

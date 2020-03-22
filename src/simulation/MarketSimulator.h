@@ -4,12 +4,12 @@
 #include "Parameter.h"
 #include <iostream>
 
-namespace simulator
-{
+namespace sail { namespace onepunch { namespace simulator {
+    
 class Market
 {
 public:
-    Market(std::string instrumentId) : tradeinfo(instrumentId), running(false)
+    Market(std::string instrumentId, int marketDataRandomSeed) : tradeinfo(instrumentId), running(false)
     {
         std::cout << "初始化行情" << std::endl
                   <<"======================="<< std::endl;
@@ -26,4 +26,5 @@ private:
     TradeInfo tradeinfo;
     bool running;
 };
-} // namespace simulator
+
+}}} // namespace simulator

@@ -7,23 +7,16 @@
 #include "Timer.h"
 #include "Strategy.h"
 
-// 会话参数
-TThostFtdcFrontIDType	trade_front_id;	//前置编号
-TThostFtdcSessionIDType	session_id;	//会话编号
-TThostFtdcOrderRefType	order_ref;	//报单引用
-time_t lOrderTime;
-time_t lOrderOkTime;
+namespace sail { namespace onepunch { namespace ctp {
 
-
-
-void CustomTradeSpi::OnFrontConnected()
+void OnePunchTradeSpi::OnFrontConnected()
 {
 	std::cout << "=====建立网络连接成功=====" << std::endl;
 	// 开始认证
 	reqUserAuth();
 }
 
-void CustomTradeSpi::OnRspAuthenticate(CThostFtdcRspAuthenticateField *pRspAuthenticateField, 
+void OnePunchTradeSpi::OnRspAuthenticate(CThostFtdcRspAuthenticateField *pRspAuthenticateField, 
 	CThostFtdcRspInfoField *pRspInfo, 
 	int nRequestID, 
 	bool bIsLast)
@@ -39,7 +32,7 @@ void CustomTradeSpi::OnRspAuthenticate(CThostFtdcRspAuthenticateField *pRspAuthe
 	}
 }
 
-void CustomTradeSpi::OnRspUserLogin(
+void OnePunchTradeSpi::OnRspUserLogin(
 	CThostFtdcRspUserLoginField *pRspUserLogin,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -63,24 +56,24 @@ void CustomTradeSpi::OnRspUserLogin(
 	}
 }
 
-void CustomTradeSpi::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+void OnePunchTradeSpi::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	isErrorRspInfo(pRspInfo);
 }
 
-void CustomTradeSpi::OnFrontDisconnected(int nReason)
+void OnePunchTradeSpi::OnFrontDisconnected(int nReason)
 {
 	std::cerr << "=====网络连接断开=====" << std::endl;
 	std::cerr << "错误码： " << nReason << std::endl;
 }
 
-void CustomTradeSpi::OnHeartBeatWarning(int nTimeLapse)
+void OnePunchTradeSpi::OnHeartBeatWarning(int nTimeLapse)
 {
 	std::cerr << "=====网络心跳超时=====" << std::endl;
 	std::cerr << "距上次连接时间： " << nTimeLapse << std::endl;
 }
 
-void CustomTradeSpi::OnRspUserLogout(
+void OnePunchTradeSpi::OnRspUserLogout(
 	CThostFtdcUserLogoutField *pUserLogout,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -95,7 +88,7 @@ void CustomTradeSpi::OnRspUserLogout(
 	}
 }
 
-void CustomTradeSpi::OnRspSettlementInfoConfirm(
+void OnePunchTradeSpi::OnRspSettlementInfoConfirm(
 	CThostFtdcSettlementInfoConfirmField *pSettlementInfoConfirm,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -111,7 +104,7 @@ void CustomTradeSpi::OnRspSettlementInfoConfirm(
 	}
 }
 
-void CustomTradeSpi::OnRspQryInstrument(
+void OnePunchTradeSpi::OnRspQryInstrument(
 	CThostFtdcInstrumentField *pInstrument,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -131,7 +124,7 @@ void CustomTradeSpi::OnRspQryInstrument(
 	}
 }
 
-void CustomTradeSpi::OnRspQryTradingAccount(
+void OnePunchTradeSpi::OnRspQryTradingAccount(
 	CThostFtdcTradingAccountField *pTradingAccount,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -150,7 +143,7 @@ void CustomTradeSpi::OnRspQryTradingAccount(
 	}
 }
 
-void CustomTradeSpi::OnRspQryInvestorPosition(
+void OnePunchTradeSpi::OnRspQryInvestorPosition(
 	CThostFtdcInvestorPositionField *pInvestorPosition,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -169,28 +162,18 @@ void CustomTradeSpi::OnRspQryInvestorPosition(
 		}
 		else
 			std::cout << "----->该合约未持仓" << std::endl;
-		
-		// 报单录入请求（这里是一部接口，此处是按顺序执行）
-		/*if (loginFlag)
-			reqOrderInsert();*/
-		//if (loginFlag)
-		//	reqOrderInsertWithParams(g_pTradeInstrumentID, gLimitPrice, 1, gTradeDirection); // 自定义一笔交易
 
 		// 策略交易
 		std::cout << "=====开始进入策略交易=====" << std::endl;
 		if (loginFlag){
-			// reqOrderInsert(g_pTradeInstrumentID, 668, 1, THOST_FTDC_D_Buy);
-			// StrategyCheckAndTrade(g_pTradeInstrumentID, this);
 			TradeState* ts1 = new CTPState(this);
-			Strategy * s2 = new BaseStrategy(ts1,pInvestorPosition->InstrumentID);
-			s2->doStrategy();
+			strategy::Strategy * s2 = new strategy::BaseStrategy(ts1,pInvestorPosition->InstrumentID);
+			s2->doStrategy(g_KlineHash);
 		}
-		
-		// StrategyCheckAndTrade(g_pTradeInstrumentID, this);
 	}
 }
 
-void CustomTradeSpi::OnRspOrderInsert(
+void OnePunchTradeSpi::OnRspOrderInsert(
 	CThostFtdcInputOrderField *pInputOrder, 
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -206,7 +189,7 @@ void CustomTradeSpi::OnRspOrderInsert(
 	}
 }
 
-void CustomTradeSpi::OnRspOrderAction(
+void OnePunchTradeSpi::OnRspOrderAction(
 	CThostFtdcInputOrderActionField *pInputOrderAction,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -220,7 +203,7 @@ void CustomTradeSpi::OnRspOrderAction(
 	}
 }
 
-void CustomTradeSpi::OnRtnOrder(CThostFtdcOrderField *pOrder)
+void OnePunchTradeSpi::OnRtnOrder(CThostFtdcOrderField *pOrder)
 {
 	char str[10];
 	sprintf(str, "%d", pOrder->OrderSubmitStatus);
@@ -241,7 +224,7 @@ void CustomTradeSpi::OnRtnOrder(CThostFtdcOrderField *pOrder)
 	}
 }
 
-void CustomTradeSpi::OnRtnTrade(CThostFtdcTradeField *pTrade)
+void OnePunchTradeSpi::OnRtnTrade(CThostFtdcTradeField *pTrade)
 {
 	std::cout << "=====报单成功成交=====" << std::endl;
 	std::cout << "成交时间： " << pTrade->TradeTime << std::endl;
@@ -251,7 +234,7 @@ void CustomTradeSpi::OnRtnTrade(CThostFtdcTradeField *pTrade)
 	std::cout << "开平仓方向： " << pTrade->Direction << std::endl;
 }
 
-bool CustomTradeSpi::isErrorRspInfo(CThostFtdcRspInfoField *pRspInfo)
+bool OnePunchTradeSpi::isErrorRspInfo(CThostFtdcRspInfoField *pRspInfo)
 {
 	bool bResult = pRspInfo && (pRspInfo->ErrorID != 0);
 	if (bResult)
@@ -259,7 +242,7 @@ bool CustomTradeSpi::isErrorRspInfo(CThostFtdcRspInfoField *pRspInfo)
 	return bResult;
 }
 
-void CustomTradeSpi::reqUserAuth()
+void OnePunchTradeSpi::reqUserAuth()
 {
 	static int requestID = 0; // 请求编号
 
@@ -277,7 +260,7 @@ void CustomTradeSpi::reqUserAuth()
 	else
 		std::cerr << "--->>>发送认证请求失败" << std::endl;
 }
-void CustomTradeSpi::reqUserLogin()
+void OnePunchTradeSpi::reqUserLogin()
 {
 	static int requestID = 0; // 请求编号
 	// changePwd();
@@ -297,7 +280,7 @@ void CustomTradeSpi::reqUserLogin()
 		std::cerr << "--->>>发送登录请求失败" << std::endl;
 }
 
-void CustomTradeSpi::changePwd()
+void OnePunchTradeSpi::changePwd()
 {
 	static int requestID = 0; // 请求编号
 	// change password at the first time
@@ -314,7 +297,7 @@ void CustomTradeSpi::changePwd()
 	else
 		std::cerr << "--->>>发送修改密码请求失败" << std::endl;
 }
-void CustomTradeSpi::reqUserLogout()
+void OnePunchTradeSpi::reqUserLogout()
 {
 	CThostFtdcUserLogoutField logoutReq;
 	memset(&logoutReq, 0, sizeof(logoutReq));
@@ -329,7 +312,7 @@ void CustomTradeSpi::reqUserLogout()
 }
 
 
-void CustomTradeSpi::reqSettlementInfoConfirm()
+void OnePunchTradeSpi::reqSettlementInfoConfirm()
 {
 	CThostFtdcSettlementInfoConfirmField settlementConfirmReq;
 	memset(&settlementConfirmReq, 0, sizeof(settlementConfirmReq));
@@ -343,7 +326,7 @@ void CustomTradeSpi::reqSettlementInfoConfirm()
 		std::cerr << "--->>>发送投资者结算结果确认请求失败" << std::endl;
 }
 
-void CustomTradeSpi::reqQueryInstrument()
+void OnePunchTradeSpi::reqQueryInstrument()
 {
 	CThostFtdcQryInstrumentField instrumentReq;
 	memset(&instrumentReq, 0, sizeof(instrumentReq));
@@ -356,7 +339,7 @@ void CustomTradeSpi::reqQueryInstrument()
 		std::cerr << "--->>>发送合约查询请求失败" << std::endl;
 }
 
-void CustomTradeSpi::reqQueryTradingAccount()
+void OnePunchTradeSpi::reqQueryTradingAccount()
 {
 	CThostFtdcQryTradingAccountField tradingAccountReq;
 	memset(&tradingAccountReq, 0, sizeof(tradingAccountReq));
@@ -371,7 +354,7 @@ void CustomTradeSpi::reqQueryTradingAccount()
 		std::cerr << "--->>>发送投资者资金账户查询请求失败" << std::endl;
 }
 
-void CustomTradeSpi::reqQueryInvestorPosition()
+void OnePunchTradeSpi::reqQueryInvestorPosition()
 {
 	CThostFtdcQryInvestorPositionField postionReq;
 	memset(&postionReq, 0, sizeof(postionReq));
@@ -387,54 +370,7 @@ void CustomTradeSpi::reqQueryInvestorPosition()
 		std::cerr << "--->>>发送投资者持仓查询请求失败" << std::endl;
 }
 
-void CustomTradeSpi::reqOrderInsert()
-{
-	CThostFtdcInputOrderField orderInsertReq;
-	memset(&orderInsertReq, 0, sizeof(orderInsertReq));
-	///经纪公司代码
-	strcpy(orderInsertReq.BrokerID, gBrokerID);
-	///投资者代码
-	strcpy(orderInsertReq.InvestorID, gInvesterID);
-	///合约代码
-	strcpy(orderInsertReq.InstrumentID, g_pTradeInstrumentID);
-	///报单引用
-	strcpy(orderInsertReq.OrderRef, order_ref);
-	///报单价格条件: 限价
-	orderInsertReq.OrderPriceType = THOST_FTDC_OPT_LimitPrice;
-	///买卖方向: 
-	orderInsertReq.Direction = gTradeDirection;
-	///组合开平标志: 开仓
-	orderInsertReq.CombOffsetFlag[0] = THOST_FTDC_OF_Open;
-	///组合投机套保标志
-	orderInsertReq.CombHedgeFlag[0] = THOST_FTDC_HF_Speculation;
-	///价格
-	orderInsertReq.LimitPrice = gLimitPrice;
-	///数量：1
-	orderInsertReq.VolumeTotalOriginal = 1;
-	///有效期类型: 当日有效
-	orderInsertReq.TimeCondition = THOST_FTDC_TC_GFD;
-	///成交量类型: 任何数量
-	orderInsertReq.VolumeCondition = THOST_FTDC_VC_AV;
-	///最小成交量: 1
-	orderInsertReq.MinVolume = 1;
-	///触发条件: 立即
-	orderInsertReq.ContingentCondition = THOST_FTDC_CC_Immediately;
-	///强平原因: 非强平
-	orderInsertReq.ForceCloseReason = THOST_FTDC_FCC_NotForceClose;
-	///自动挂起标志: 否
-	orderInsertReq.IsAutoSuspend = 0;
-	///用户强评标志: 否
-	orderInsertReq.UserForceClose = 0;
-
-	static int requestID = 0; // 请求编号
-	int rt = g_pTradeUserApi->ReqOrderInsert(&orderInsertReq, ++requestID);
-	if (!rt)
-		std::cout << ">>>>>>发送报单录入请求成功" << std::endl;
-	else
-		std::cerr << "--->>>发送报单录入请求失败" << std::endl;
-}
-
-void CustomTradeSpi::reqOrderInsert(
+void OnePunchTradeSpi::reqOrderInsert(
 	TThostFtdcInstrumentIDType instrumentID,
 	TThostFtdcPriceType price,
 	TThostFtdcVolumeType volume,
@@ -487,7 +423,7 @@ void CustomTradeSpi::reqOrderInsert(
 		std::cerr << "--->>>发送报单录入请求失败" << std::endl;
 }
 
-void CustomTradeSpi::reqOrderAction(CThostFtdcOrderField *pOrder)
+void OnePunchTradeSpi::reqOrderAction(CThostFtdcOrderField *pOrder)
 {
 	static bool orderActionSentFlag = false; // 是否发送了报单
 	if (orderActionSentFlag)
@@ -532,16 +468,18 @@ void CustomTradeSpi::reqOrderAction(CThostFtdcOrderField *pOrder)
 	orderActionSentFlag = true;
 }
 
-bool CustomTradeSpi::isMyOrder(CThostFtdcOrderField *pOrder)
+bool OnePunchTradeSpi::isMyOrder(CThostFtdcOrderField *pOrder)
 {
 	return ((pOrder->FrontID == trade_front_id) &&
 		(pOrder->SessionID == session_id) &&
 		(strcmp(pOrder->OrderRef, order_ref) == 0));
 }
 
-bool CustomTradeSpi::isTradingOrder(CThostFtdcOrderField *pOrder)
+bool OnePunchTradeSpi::isTradingOrder(CThostFtdcOrderField *pOrder)
 {
 	return ((pOrder->OrderStatus != THOST_FTDC_OST_PartTradedNotQueueing) &&
 		(pOrder->OrderStatus != THOST_FTDC_OST_Canceled) &&
 		(pOrder->OrderStatus != THOST_FTDC_OST_AllTraded));
 }
+
+}}}

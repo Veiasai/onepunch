@@ -3,10 +3,12 @@
 #include <cstring>
 #include "Parameters.h"
 #include "TickToKlineHelper.h"
+#include "OnePunchMdSpi.h"
 
+namespace sail { namespace onepunch { namespace ctp {
 // ---- ctp_api回调函数 ---- //
 // 连接成功应答
-void CustomMdSpi::OnFrontConnected()
+void OnePunchMdSpi::OnFrontConnected()
 {
 	std::cout << "=====建立网络连接成功=====" << std::endl;
 	// 开始登录
@@ -25,21 +27,21 @@ void CustomMdSpi::OnFrontConnected()
 }
 
 // 断开连接通知
-void CustomMdSpi::OnFrontDisconnected(int nReason)
+void OnePunchMdSpi::OnFrontDisconnected(int nReason)
 {
 	std::cerr << "=====网络连接断开=====" << std::endl;
 	std::cerr << "错误码： " << nReason << std::endl;
 }
 
 // 心跳超时警告
-void CustomMdSpi::OnHeartBeatWarning(int nTimeLapse)
+void OnePunchMdSpi::OnHeartBeatWarning(int nTimeLapse)
 {
 	std::cerr << "=====网络心跳超时=====" << std::endl;
 	std::cerr << "距上次连接时间： " << nTimeLapse << std::endl;
 }
 
 // 登录应答
-void CustomMdSpi::OnRspUserLogin(
+void OnePunchMdSpi::OnRspUserLogin(
 	CThostFtdcRspUserLoginField *pRspUserLogin,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -65,7 +67,7 @@ void CustomMdSpi::OnRspUserLogin(
 }
 
 // 登出应答
-void CustomMdSpi::OnRspUserLogout(
+void OnePunchMdSpi::OnRspUserLogout(
 	CThostFtdcUserLogoutField *pUserLogout,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -83,7 +85,7 @@ void CustomMdSpi::OnRspUserLogout(
 }
 
 // 错误通知
-void CustomMdSpi::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+void OnePunchMdSpi::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	bool bResult = pRspInfo && (pRspInfo->ErrorID != 0);
 	if (bResult)
@@ -91,7 +93,7 @@ void CustomMdSpi::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, b
 }
 
 // 订阅行情应答
-void CustomMdSpi::OnRspSubMarketData(
+void OnePunchMdSpi::OnRspSubMarketData(
 	CThostFtdcSpecificInstrumentField *pSpecificInstrument,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -125,7 +127,7 @@ void CustomMdSpi::OnRspSubMarketData(
 }
 
 // 取消订阅行情应答
-void CustomMdSpi::OnRspUnSubMarketData(
+void OnePunchMdSpi::OnRspUnSubMarketData(
 	CThostFtdcSpecificInstrumentField *pSpecificInstrument,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -142,7 +144,7 @@ void CustomMdSpi::OnRspUnSubMarketData(
 }
 
 // 订阅询价应答
-void CustomMdSpi::OnRspSubForQuoteRsp(
+void OnePunchMdSpi::OnRspSubForQuoteRsp(
 	CThostFtdcSpecificInstrumentField *pSpecificInstrument,
 	CThostFtdcRspInfoField *pRspInfo,
 	int nRequestID,
@@ -159,7 +161,7 @@ void CustomMdSpi::OnRspSubForQuoteRsp(
 }
 
 // 取消订阅询价应答
-void CustomMdSpi::OnRspUnSubForQuoteRsp(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+void OnePunchMdSpi::OnRspUnSubForQuoteRsp(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
 	bool bResult = pRspInfo && (pRspInfo->ErrorID != 0);
 	if (!bResult)
@@ -172,7 +174,7 @@ void CustomMdSpi::OnRspUnSubForQuoteRsp(CThostFtdcSpecificInstrumentField *pSpec
 }
 
 // 行情详情通知
-void CustomMdSpi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData)
+void OnePunchMdSpi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData)
 {
 	// 打印行情，字段较多，截取部分
 	std::cout << "=====获得深度行情=====" << std::endl;
@@ -219,7 +221,7 @@ void CustomMdSpi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMar
 }
 
 // 询价详情通知
-void CustomMdSpi::OnRtnForQuoteRsp(CThostFtdcForQuoteRspField *pForQuoteRsp)
+void OnePunchMdSpi::OnRtnForQuoteRsp(CThostFtdcForQuoteRspField *pForQuoteRsp)
 {
 	// 部分询价结果
 	std::cout << "=====获得询价结果=====" << std::endl;
@@ -228,3 +230,5 @@ void CustomMdSpi::OnRtnForQuoteRsp(CThostFtdcForQuoteRspField *pForQuoteRsp)
 	std::cout << "合约代码： " << pForQuoteRsp->InstrumentID << std::endl;
 	std::cout << "询价编号： " << pForQuoteRsp->ForQuoteSysID << std::endl;
 }
+
+}}}

@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <string>
+#include "CTP_API/inc/ThostFtdcUserApiStruct.h"
+
+namespace sail { namespace onepunch {
 
 // k线数据结构
 struct KLineDataType
@@ -21,8 +24,12 @@ public:
 	void KLineFromLocalData(const std::string &sFilePath, const std::string &dFilePath); 
 	// 从实时数据构建k线
 	void KLineFromRealtimeData(CThostFtdcDepthMarketDataField *pDepthMarketData);
+	// push a klinedata. used in simulation.
+	void PushData(const KLineDataType & k_line_data);
 public:
 	std::vector<double> m_priceVec; // 存储1分钟的价格
 	std::vector<int> m_volumeVec; // 存储1分钟的成交量
 	std::vector<KLineDataType> m_KLineDataArray;
 };
+
+}}

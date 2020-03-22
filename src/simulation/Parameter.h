@@ -3,8 +3,7 @@
 #include <map>
 #include <ctime>
 
-namespace simulator
-{
+namespace sail { namespace onepunch { namespace simulator {
 
 class TradeInfo
 {
@@ -41,4 +40,4 @@ public:
     UserInfo(const std::string &userid) : UserID(userid), OpenVolume(), Available(BASEAVAILABLE), CloseProfit(0) {}
 };
 
-} // namespace simulator
+}}} // namespace simulator
