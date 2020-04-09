@@ -109,16 +109,17 @@ void OnePunchMdSpi::OnRspSubMarketData(
 		sprintf(filePath, "%s_market_data.csv", pSpecificInstrument->InstrumentID);
 		std::ofstream outFile;
 		outFile.open(filePath, std::ios::out); // 新开文件
-		outFile << "合约代码" << ","
-			<< "更新时间" << ","
+		outFile 
+			<< "合约代码" << ","
+			// << "更新时间" << ","
 			<< "最新价" << ","
 			<< "成交量" << ","
 			<< "买价一" << ","
 			<< "买量一" << ","
 			<< "卖价一" << ","
 			<< "卖量一" << ","
-			<< "持仓量" << ","
-			<< "换手率"
+			// << "持仓量" << ","
+			// << "换手率"
 			<< std::endl;
 		outFile.close();
 	}
@@ -178,13 +179,13 @@ void OnePunchMdSpi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthM
 {
 	// 打印行情，字段较多，截取部分
 	std::cout << "=====获得深度行情=====" << std::endl;
-	std::cout << "交易日： " << pDepthMarketData->TradingDay << std::endl;
-	std::cout << "交易所代码： " << pDepthMarketData->ExchangeID << std::endl;
+	// std::cout << "交易日： " << pDepthMarketData->TradingDay << std::endl;
+	// std::cout << "交易所代码： " << pDepthMarketData->ExchangeID << std::endl;
 	std::cout << "合约代码： " << pDepthMarketData->InstrumentID << std::endl;
-	std::cout << "合约在交易所的代码： " << pDepthMarketData->ExchangeInstID << std::endl;
+	// std::cout << "合约在交易所的代码： " << pDepthMarketData->ExchangeInstID << std::endl;
 	std::cout << "最新价： " << pDepthMarketData->LastPrice << std::endl;
 	std::cout << "成交量： " << pDepthMarketData->Volume << std::endl;
-	std::cout << "最后修改时间： " << pDepthMarketData->UpdateTime<< "." << pDepthMarketData->UpdateMillisec << std::endl;
+	// std::cout << "最后修改时间： " << pDepthMarketData->UpdateTime<< "." << pDepthMarketData->UpdateMillisec << std::endl;
 	std::cout << "申买价1： " << pDepthMarketData->BidPrice1 << std::endl;
 	std::cout << "申买量1： " << pDepthMarketData->BidVolume1 << std::endl;
 	std::cout << "申卖价1： " << pDepthMarketData->AskPrice1 << std::endl;
@@ -195,15 +196,16 @@ void OnePunchMdSpi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthM
 	std::ofstream outFile;
 	outFile.open(filePath, std::ios::app); // 文件追加写入
 	outFile << pDepthMarketData->InstrumentID << ","
-		<< pDepthMarketData->UpdateTime << "." << pDepthMarketData->UpdateMillisec << ","
+		// << pDepthMarketData->UpdateTime << "." << pDepthMarketData->UpdateMillisec << ","
 		<< pDepthMarketData->LastPrice << ","
 		<< pDepthMarketData->Volume << ","
 		<< pDepthMarketData->BidPrice1 << ","
 		<< pDepthMarketData->BidVolume1 << ","
 		<< pDepthMarketData->AskPrice1 << ","
 		<< pDepthMarketData->AskVolume1 << ","
-		<< pDepthMarketData->OpenInterest << ","
-		<< pDepthMarketData->Turnover << std::endl;
+		// << pDepthMarketData->OpenInterest << ","
+		// << pDepthMarketData->Turnover 
+		<< std::endl;
 	outFile.close();
 
 	// 计算实时k线

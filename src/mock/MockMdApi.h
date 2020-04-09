@@ -2,8 +2,11 @@
 // ---- 派生的行情类 ---- //
 #include <vector>
 #include <unordered_map>
+#include <string.h>
+#include <string>
+#include <thread>
 #include "../CTP_API/inc/ThostFtdcMdApi.h"
-#include "../TickToKlineHelper.h"
+#include "DepthMarketDataGenerator.h"
 
 namespace sail
 {
@@ -14,20 +17,28 @@ namespace mock
 
 class MockMdApi : public CThostFtdcMdApi
 {
+private:
+    CThostFtdcMdSpi *g_pMdUserSpi;
+    char gMdFrontAddr[63];
+    std::vector<std::string> instrumentIDs;
+    sail::onepunch::mock::DepthMarketDataGenerator *dmdg;
+    std::unordered_map<std::string, std::vector<CThostFtdcDepthMarketDataField>> DepthMarketDataHash;
+    std::thread MdApiThread;
+
+    void MdApiInit();
+
 public:
+    void setDepthMarketDataGenerator(const std::string &instrumentId, int marketDataRandomSeed);
+
     ///创建MdApi
     ///@param pszFlowPath 存贮订阅信息文件的目录，默认为当前目录
     ///@return 创建出的UserApi
     ///modify for udp marketdata
-    static MockMdApi *CreateFtdcMdApi(const char *pszFlowPath = "", const bool bIsUsingUdp = false, const bool bIsMulticast = false);
-
-    ///获取API的版本信息
-    ///@retrun 获取到的版本号
-    static const char *GetApiVersion();
+    static MockMdApi *CreateFtdcMdApi();
 
     ///删除接口对象本身
     ///@remark 不再使用本接口对象时,调用该函数删除接口对象
-    void Release();
+    void Release() { delete dmdg; }
 
     ///初始化
     ///@remark 初始化运行环境,只有调用后,接口才开始工作
@@ -46,22 +57,22 @@ public:
     ///@param pszFrontAddress：前置机网络地址。
     ///@remark 网络地址的格式为：“protocol://ipaddress:port”，如：”tcp://127.0.0.1:17001”。
     ///@remark “tcp”代表传输协议，“127.0.0.1”代表服务器地址。”17001”代表服务器端口号。
-    void RegisterFront(char *pszFrontAddress);
+    void RegisterFront(char *pszFrontAddress) { memcpy(gMdFrontAddr, pszFrontAddress, 63); };
 
     ///注册名字服务器网络地址
     ///@param pszNsAddress：名字服务器网络地址。
     ///@remark 网络地址的格式为：“protocol://ipaddress:port”，如：”tcp://127.0.0.1:12001”。
     ///@remark “tcp”代表传输协议，“127.0.0.1”代表服务器地址。”12001”代表服务器端口号。
     ///@remark RegisterNameServer优先于RegisterFront
-    void RegisterNameServer(char *pszNsAddress);
+    void RegisterNameServer(char *pszNsAddress){};
 
     ///注册名字服务器用户信息
     ///@param pFensUserInfo：用户信息。
-    void RegisterFensUserInfo(CThostFtdcFensUserInfoField *pFensUserInfo);
+    void RegisterFensUserInfo(CThostFtdcFensUserInfoField *pFensUserInfo){};
 
     ///注册回调接口
     ///@param pSpi 派生自回调接口类的实例
-    void RegisterSpi(CThostFtdcMdSpi *pSpi);
+    void RegisterSpi(CThostFtdcMdSpi *pSpi) { this->g_pMdUserSpi = pSpi; };
 
     ///订阅行情。
     ///@param ppInstrumentID 合约ID
@@ -88,16 +99,13 @@ public:
     int UnSubscribeForQuoteRsp(char *ppInstrumentID[], int nCount);
 
     ///用户登录请求
-    int ReqUserLogin(CThostFtdcReqUserLoginField *pReqUserLoginField, int nRequestID);
+    int ReqUserLogin(CThostFtdcReqUserLoginField *pReqUserLoginField, int nRequestID) { return 0; };
 
     ///登出请求
-    int ReqUserLogout(CThostFtdcUserLogoutField *pUserLogout, int nRequestID);
+    int ReqUserLogout(CThostFtdcUserLogoutField *pUserLogout, int nRequestID) { return 0; };
 
     ///请求查询组播合约
-    int ReqQryMulticastInstrument(CThostFtdcQryMulticastInstrumentField *pQryMulticastInstrument, int nRequestID);
-
-protected:
-    ~MockMdApi(){};
+    int ReqQryMulticastInstrument(CThostFtdcQryMulticastInstrumentField *pQryMulticastInstrument, int nRequestID) { return 0; };
 };
 
 } // namespace mock
