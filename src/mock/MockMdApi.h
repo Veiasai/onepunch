@@ -5,6 +5,7 @@
 #include <string.h>
 #include <string>
 #include <thread>
+#include <assert.h>
 #include "../CTP_API/inc/ThostFtdcMdApi.h"
 #include "DepthMarketDataGenerator.h"
 #include "../OnePunchMdSpi.h"
@@ -16,7 +17,7 @@ namespace onepunch
 namespace mock
 {
 
-class MockMdApi : public CThostFtdcMdApi
+class MockMdApi final : public CThostFtdcMdApi
 {
 private:
     ctp::OnePunchMdSpi *g_pMdUserSpi;
@@ -93,13 +94,13 @@ public:
     ///@param ppInstrumentID 合约ID
     ///@param nCount 要订阅/退订行情的合约个数
     ///@remark
-    int SubscribeForQuoteRsp(char *ppInstrumentID[], int nCount);
+    int SubscribeForQuoteRsp(char *ppInstrumentID[], int nCount) { assert(0); };
 
     ///退订询价。
     ///@param ppInstrumentID 合约ID
     ///@param nCount 要订阅/退订行情的合约个数
     ///@remark
-    int UnSubscribeForQuoteRsp(char *ppInstrumentID[], int nCount);
+    int UnSubscribeForQuoteRsp(char *ppInstrumentID[], int nCount) { assert(0); };
 
     ///用户登录请求
     int ReqUserLogin(CThostFtdcReqUserLoginField *pReqUserLoginField, int nRequestID) { return 0; };

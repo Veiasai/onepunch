@@ -13,7 +13,7 @@ namespace mock
 ///创建TraderApi
 ///@param pszFlowPath 存贮订阅信息文件的目录，默认为当前目录
 ///@return 创建出的UserApi
-static MockTraderApi *CreateMockTraderApi()
+MockTraderApi * MockTraderApi::CreateMockTraderApi()
 {
     static MockTraderApi singleton;
     return &singleton;
