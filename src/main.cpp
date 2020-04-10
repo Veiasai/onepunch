@@ -88,7 +88,7 @@ int main()
 
 		// 初始化行情线程
 		cout << "初始化行情..." << endl;
-		mock::MockMdApi *g_pMdUserApi = mock::MockMdApi::CreateFtdcMdApi(); // 创建行情实例
+		mock::MockMdApi *g_pMdUserApi = mock::MockMdApi::CreateMockMdApi(); // 创建行情实例
 		pMdUserSpi->setMdUserApi(g_pMdUserApi);
 		g_pMdUserApi->setIntervalTime(config->interval);								   // 设置行情变化间隔时间
 		g_pMdUserApi->RegisterSpi(pMdUserSpi);											   // 注册事件类
@@ -98,7 +98,7 @@ int main()
 
 		// 初始化交易线程
 		cout << "初始化交易..." << endl;
-		mock::MockTraderApi *g_pTradeUserApi = mock::MockTraderApi::CreateFtdcTraderApi(); // 创建交易实例
+		mock::MockTraderApi *g_pTradeUserApi = mock::MockTraderApi::CreateMockTraderApi(); // 创建交易实例
 		pTradeSpi->setTradeUserApi(g_pTradeUserApi);
 		g_pTradeUserApi->RegisterSpi(pTradeSpi);					// 注册事件类
 		g_pTradeUserApi->SubscribePublicTopic(THOST_TERT_RESTART);	// 订阅公共流

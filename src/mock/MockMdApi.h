@@ -37,7 +37,7 @@ public:
     ///@param pszFlowPath 存贮订阅信息文件的目录，默认为当前目录
     ///@return 创建出的UserApi
     ///modify for udp marketdata
-    static MockMdApi *CreateFtdcMdApi();
+    static MockMdApi *CreateMockMdApi();
 
     ///删除接口对象本身
     ///@remark 不再使用本接口对象时,调用该函数删除接口对象

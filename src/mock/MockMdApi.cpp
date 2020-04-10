@@ -18,7 +18,7 @@ void MockMdApi::setDepthMarketDataGenerator(const std::string &instrumentId, int
 ///@param pszFlowPath 存贮订阅信息文件的目录，默认为当前目录
 ///@return 创建出的UserApi
 ///modify for udp marketdata
-static MockMdApi *CreateFtdcMdApi()
+static MockMdApi *CreateMockMdApi()
 {
     static MockMdApi singleton;
     return &singleton;
