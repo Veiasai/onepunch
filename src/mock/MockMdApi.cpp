@@ -50,10 +50,14 @@ void MockMdApi::MdApiInit()
     pRspInfo->ErrorID = 0;
     g_pMdUserSpi->OnRspSubMarketData(pSpecificInstrument, pRspInfo, 0, 0);
 
-    // 获得深度行情
-    dmdg->poll(1);
-    g_pMdUserSpi->OnRtnDepthMarketData(DepthMarketDataHash[instrumentIDs[0]].data);
-
+    while (1)
+    {
+        // 获得深度行情
+        dmdg->poll(1);
+        auto a = DepthMarketDataHash[instrumentIDs[0]];
+        g_pMdUserSpi->OnRtnDepthMarketData(&a[a.size() - 1]);
+        std::this_thread::sleep_for(std::chrono::seconds(this->interval_time));
+    }
 }
 
 ///初始化

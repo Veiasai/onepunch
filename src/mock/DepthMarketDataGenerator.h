@@ -4,7 +4,7 @@
 #include <iostream>
 #include <random>
 #include <vector>
-#include "CTP_API/inc/ThostFtdcUserApiStruct.h"
+#include "../CTP_API/inc/ThostFtdcUserApiStruct.h"
 
 namespace sail { namespace onepunch { namespace mock {
 

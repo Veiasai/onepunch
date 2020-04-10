@@ -90,6 +90,7 @@ int main()
 		cout << "初始化行情..." << endl;
 		mock::MockMdApi *g_pMdUserApi = mock::MockMdApi::CreateFtdcMdApi(); // 创建行情实例
 		pMdUserSpi->setMdUserApi(g_pMdUserApi);
+		g_pMdUserApi->setIntervalTime(config->interval);								   // 设置行情变化间隔时间
 		g_pMdUserApi->RegisterSpi(pMdUserSpi);											   // 注册事件类
 		g_pMdUserApi->RegisterFront(config->gMdFrontAddr);								   // 设置行情前置地址
 		g_pMdUserApi->SubscribeMarketData(config->g_pInstrumentID, config->instrumentNum); // 设置订阅合约

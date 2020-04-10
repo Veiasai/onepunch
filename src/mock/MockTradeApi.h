@@ -1,8 +1,12 @@
 #pragma once
 // ---- 派生的交易类 ---- //
-#include "../CTP_API/inc/ThostFtdcTraderApi.h"
+#include <string.h>
 #include <unordered_map>
-#include "../TickToKlineHelper.h"
+#include <string>
+#include <thread>
+
+#include "../CTP_API/inc/ThostFtdcTraderApi.h"
+#include "../OnePunchTradeSpi.h"
 
 namespace sail
 {
@@ -13,64 +17,71 @@ namespace mock
 
 class MockTraderApi : public CThostFtdcTraderApi
 {
+private:
+	ctp::OnePunchTradeSpi *pTradeSpi;
+	char FrontAddr[63];
+	// 资金账户
+	CThostFtdcTradingAccountField *pTradingAccount;
+	// 持仓情况
+	std::unordered_map<std::string, CThostFtdcInvestorPositionField> InvestorPosition;
+
+	void TraderInit();
+	std::thread traderThread;
+
 public:
 	///创建TraderApi
 	///@param pszFlowPath 存贮订阅信息文件的目录，默认为当前目录
 	///@return 创建出的UserApi
-	static MockTraderApi *CreateFtdcTraderApi(const char *pszFlowPath = "");
-	
-	///获取API的版本信息
-	///@retrun 获取到的版本号
-	static const char *GetApiVersion();
-	
+	static MockTraderApi *CreateFtdcTraderApi();
+
 	///删除接口对象本身
 	///@remark 不再使用本接口对象时,调用该函数删除接口对象
 	void Release();
-	
+
 	///初始化
 	///@remark 初始化运行环境,只有调用后,接口才开始工作
 	void Init();
-	
+
 	///等待接口线程结束运行
 	///@return 线程退出代码
 	int Join();
-	
+
 	///获取当前交易日
 	///@retrun 获取到的交易日
 	///@remark 只有登录成功后,才能得到正确的交易日
 	const char *GetTradingDay();
-	
+
 	///注册前置机网络地址
 	///@param pszFrontAddress：前置机网络地址。
-	///@remark 网络地址的格式为：“protocol://ipaddress:port”，如：”tcp://127.0.0.1:17001”。 
+	///@remark 网络地址的格式为：“protocol://ipaddress:port”，如：”tcp://127.0.0.1:17001”。
 	///@remark “tcp”代表传输协议，“127.0.0.1”代表服务器地址。”17001”代表服务器端口号。
-	void RegisterFront(char *pszFrontAddress);
-	
+	void RegisterFront(char *pszFrontAddress) { memcpy(FrontAddr, pszFrontAddress, 63); };
+
 	///注册名字服务器网络地址
 	///@param pszNsAddress：名字服务器网络地址。
-	///@remark 网络地址的格式为：“protocol://ipaddress:port”，如：”tcp://127.0.0.1:12001”。 
+	///@remark 网络地址的格式为：“protocol://ipaddress:port”，如：”tcp://127.0.0.1:12001”。
 	///@remark “tcp”代表传输协议，“127.0.0.1”代表服务器地址。”12001”代表服务器端口号。
 	///@remark RegisterNameServer优先于RegisterFront
 	void RegisterNameServer(char *pszNsAddress);
-	
+
 	///注册名字服务器用户信息
 	///@param pFensUserInfo：用户信息。
-	void RegisterFensUserInfo(CThostFtdcFensUserInfoField * pFensUserInfo);
-	
+	void RegisterFensUserInfo(CThostFtdcFensUserInfoField *pFensUserInfo);
+
 	///注册回调接口
 	///@param pSpi 派生自回调接口类的实例
-	void RegisterSpi(CThostFtdcTraderSpi *pSpi);
-	
+	void RegisterSpi(CThostFtdcTraderSpi *pSpi) { this->pTradeSpi = (ctp::OnePunchTradeSpi *)pSpi; };
+
 	///订阅私有流。
-	///@param nResumeType 私有流重传方式  
+	///@param nResumeType 私有流重传方式
 	///        THOST_TERT_RESTART:从本交易日开始重传
 	///        THOST_TERT_RESUME:从上次收到的续传
 	///        THOST_TERT_QUICK:只传送登录后私有流的内容
 	///@remark 该方法要在Init方法前调用。若不调用则不会收到私有流的数据。
 	void SubscribePrivateTopic(THOST_TE_RESUME_TYPE nResumeType);
-	
+
 	///订阅公共流。
-	///@param nResumeType 公共流重传方式  
+	///@param nResumeType 公共流重传方式
 	///        THOST_TERT_RESTART:从本交易日开始重传
 	///        THOST_TERT_RESUME:从上次收到的续传
 	///        THOST_TERT_QUICK:只传送登录后公共流的内容
@@ -78,7 +89,7 @@ public:
 	void SubscribePublicTopic(THOST_TE_RESUME_TYPE nResumeType);
 
 	///客户端认证请求
-	int ReqAuthenticate(CThostFtdcReqAuthenticateField *pReqAuthenticateField, int nRequestID);
+	int ReqAuthenticate(CThostFtdcReqAuthenticateField *pReqAuthenticateField, int nRequestID) { return 0; }
 
 	///注册用户终端信息，用于中继服务器多连接模式
 	///需要在终端认证成功后，用户登录前调用该接口
@@ -89,7 +100,7 @@ public:
 	int SubmitUserSystemInfo(CThostFtdcUserSystemInfoField *pUserSystemInfo);
 
 	///用户登录请求
-	int ReqUserLogin(CThostFtdcReqUserLoginField *pReqUserLoginField, int nRequestID);
+	int ReqUserLogin(CThostFtdcReqUserLoginField *pReqUserLoginField, int nRequestID) { return 0; }
 
 	///登出请求
 	int ReqUserLogout(CThostFtdcUserLogoutField *pUserLogout, int nRequestID);
@@ -330,8 +341,6 @@ public:
 
 	///期货发起查询银行余额请求
 	int ReqQueryBankAccountMoneyByFuture(CThostFtdcReqQueryAccountField *pReqQueryAccount, int nRequestID);
-protected:
-	~MockTraderApi(){};
 };
 
 } // namespace mock

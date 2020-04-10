@@ -7,6 +7,7 @@
 #include <thread>
 #include "../CTP_API/inc/ThostFtdcMdApi.h"
 #include "DepthMarketDataGenerator.h"
+#include "../OnePunchMdSpi.h"
 
 namespace sail
 {
@@ -18,17 +19,19 @@ namespace mock
 class MockMdApi : public CThostFtdcMdApi
 {
 private:
-    CThostFtdcMdSpi *g_pMdUserSpi;
+    ctp::OnePunchMdSpi *g_pMdUserSpi;
     char gMdFrontAddr[63];
     std::vector<std::string> instrumentIDs;
     sail::onepunch::mock::DepthMarketDataGenerator *dmdg;
     std::unordered_map<std::string, std::vector<CThostFtdcDepthMarketDataField>> DepthMarketDataHash;
     std::thread MdApiThread;
+    int interval_time;
 
     void MdApiInit();
 
 public:
     void setDepthMarketDataGenerator(const std::string &instrumentId, int marketDataRandomSeed);
+    void setIntervalTime(int interval) { this->interval_time = interval; }
 
     ///创建MdApi
     ///@param pszFlowPath 存贮订阅信息文件的目录，默认为当前目录
@@ -72,7 +75,7 @@ public:
 
     ///注册回调接口
     ///@param pSpi 派生自回调接口类的实例
-    void RegisterSpi(CThostFtdcMdSpi *pSpi) { this->g_pMdUserSpi = pSpi; };
+    void RegisterSpi(CThostFtdcMdSpi *pSpi) { this->g_pMdUserSpi = (ctp::OnePunchMdSpi *)pSpi; };
 
     ///订阅行情。
     ///@param ppInstrumentID 合约ID
