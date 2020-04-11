@@ -19,9 +19,10 @@ public:
         mt.seed(marketDataRandomSeed);
     }
     void poll(int insertNum);
+
+    std::unordered_map<std::string, std::vector<CThostFtdcDepthMarketDataField>> & DepthMarketDataHash;
 private:
     const std::string instrumentId;
-    std::unordered_map<std::string, std::vector<CThostFtdcDepthMarketDataField>> & DepthMarketDataHash;
     CThostFtdcDepthMarketDataField data;
     std::mt19937 mt;
     std::normal_distribution<double> normal_dist = std::normal_distribution<double>(200, 6);

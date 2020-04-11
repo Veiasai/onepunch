@@ -9,7 +9,7 @@ namespace onepunch
 {
 namespace mock
 {
-void MockMdApi::setDepthMarketDataGenerator(const std::string &instrumentId, int marketDataRandomSeed)
+void MockMdApi::setDepthMarketDataGenerator(std::unordered_map<std::string, std::vector<CThostFtdcDepthMarketDataField>> DepthMarketDataHash, const std::string &instrumentId, int marketDataRandomSeed)
 {
     dmdg = new DepthMarketDataGenerator(DepthMarketDataHash, instrumentId, marketDataRandomSeed);
 }
@@ -18,7 +18,7 @@ void MockMdApi::setDepthMarketDataGenerator(const std::string &instrumentId, int
 ///@param pszFlowPath 存贮订阅信息文件的目录，默认为当前目录
 ///@return 创建出的UserApi
 ///modify for udp marketdata
-MockMdApi * MockMdApi::CreateMockMdApi()
+MockMdApi *MockMdApi::CreateMockMdApi()
 {
     static MockMdApi singleton;
     return &singleton;
@@ -45,7 +45,7 @@ void MockMdApi::MdApiInit()
 
     // 订阅行情应答
     CThostFtdcSpecificInstrumentField *pSpecificInstrument = new CThostFtdcSpecificInstrumentField();
-    memcpy(pSpecificInstrument->InstrumentID, &instrumentIDs[0], 32);
+    strcpy(pSpecificInstrument->InstrumentID, instrumentIDs[0].c_str());
     CThostFtdcRspInfoField *pRspInfo = new CThostFtdcRspInfoField();
     pRspInfo->ErrorID = 0;
     g_pMdUserSpi->OnRspSubMarketData(pSpecificInstrument, pRspInfo, 0, 0);
@@ -54,7 +54,7 @@ void MockMdApi::MdApiInit()
     {
         // 获得深度行情
         dmdg->poll(1);
-        auto a = DepthMarketDataHash[instrumentIDs[0]];
+        auto a = dmdg->DepthMarketDataHash[instrumentIDs[0]];
         g_pMdUserSpi->OnRtnDepthMarketData(&a[a.size() - 1]);
         std::this_thread::sleep_for(std::chrono::seconds(this->interval_time));
     }

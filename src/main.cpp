@@ -88,8 +88,11 @@ int main()
 
 		// 初始化行情线程
 		cout << "初始化行情..." << endl;
+		std::unordered_map<std::string, std::vector<CThostFtdcDepthMarketDataField>> DepthMarketDataHash = {}; // 初始化行情
+
 		mock::MockMdApi *g_pMdUserApi = mock::MockMdApi::CreateMockMdApi(); // 创建行情实例
 		pMdUserSpi->setMdUserApi(g_pMdUserApi);
+		g_pMdUserApi->setDepthMarketDataGenerator(DepthMarketDataHash, config->g_pInstrumentID[0], config->marketDataRamdomSeed);
 		g_pMdUserApi->setIntervalTime(config->interval);								   // 设置行情变化间隔时间
 		g_pMdUserApi->RegisterSpi(pMdUserSpi);											   // 注册事件类
 		g_pMdUserApi->RegisterFront(config->gMdFrontAddr);								   // 设置行情前置地址
@@ -100,11 +103,13 @@ int main()
 		cout << "初始化交易..." << endl;
 		mock::MockTraderApi *g_pTradeUserApi = mock::MockTraderApi::CreateMockTraderApi(); // 创建交易实例
 		pTradeSpi->setTradeUserApi(g_pTradeUserApi);
-		g_pTradeUserApi->RegisterSpi(pTradeSpi);					// 注册事件类
-		g_pTradeUserApi->SubscribePublicTopic(THOST_TERT_RESTART);	// 订阅公共流
-		g_pTradeUserApi->SubscribePrivateTopic(THOST_TERT_RESTART); // 订阅私有流
-		g_pTradeUserApi->RegisterFront(config->gTradeFrontAddr);	// 设置交易前置地址
-		g_pTradeUserApi->Init();									// 连接运行
+		g_pTradeUserApi->setInstrumentIDs(config->g_pInstrumentID, config->instrumentNum); // 设置交易合约
+		g_pTradeUserApi->RegisterSpi(pTradeSpi);										   // 注册事件类
+		g_pTradeUserApi->setIntervalTime(config->interval);								   // 设置行情变化间隔时间
+		g_pTradeUserApi->SubscribePublicTopic(THOST_TERT_RESTART);						   // 订阅公共流
+		g_pTradeUserApi->SubscribePrivateTopic(THOST_TERT_RESTART);						   // 订阅私有流
+		g_pTradeUserApi->RegisterFront(config->gTradeFrontAddr);						   // 设置交易前置地址
+		g_pTradeUserApi->Init();														   // 连接运行
 
 		// 等到线程退出
 		g_pMdUserApi->Join();

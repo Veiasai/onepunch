@@ -2,7 +2,7 @@
 // ---- 派生的行情类 ---- //
 #include <vector>
 #include <unordered_map>
-#include <string.h>
+#include <cstring>
 #include <string>
 #include <thread>
 #include <assert.h>
@@ -24,14 +24,13 @@ private:
     char gMdFrontAddr[63];
     std::vector<std::string> instrumentIDs;
     sail::onepunch::mock::DepthMarketDataGenerator *dmdg;
-    std::unordered_map<std::string, std::vector<CThostFtdcDepthMarketDataField>> DepthMarketDataHash;
     std::thread MdApiThread;
     int interval_time;
 
     void MdApiInit();
 
 public:
-    void setDepthMarketDataGenerator(const std::string &instrumentId, int marketDataRandomSeed);
+    void setDepthMarketDataGenerator(std::unordered_map<std::string, std::vector<CThostFtdcDepthMarketDataField>> DepthMarketDataHash,const std::string &instrumentId, int marketDataRandomSeed);
     void setIntervalTime(int interval) { this->interval_time = interval; }
 
     ///创建MdApi

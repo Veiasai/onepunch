@@ -13,7 +13,7 @@ namespace mock
 ///创建TraderApi
 ///@param pszFlowPath 存贮订阅信息文件的目录，默认为当前目录
 ///@return 创建出的UserApi
-MockTraderApi * MockTraderApi::CreateMockTraderApi()
+MockTraderApi *MockTraderApi::CreateMockTraderApi()
 {
     static MockTraderApi singleton;
     return &singleton;
@@ -32,7 +32,7 @@ void MockTraderApi::TraderInit()
 {
     // 初始化投资者账户
     this->pTradingAccount = new CThostFtdcTradingAccountField();
-    memcpy(this->pTradingAccount->AccountID, "accountId", 10);
+    strcpy(this->pTradingAccount->AccountID, "accountId");
     this->pTradingAccount->Available = 1000000.0;
     this->pTradingAccount->WithdrawQuota = 1000000.0;
     this->pTradingAccount->CurrMargin = 100;
@@ -48,8 +48,44 @@ void MockTraderApi::TraderInit()
 
     // 查询投资者资金账户
     this->pTradeSpi->OnRspQryTradingAccount(this->pTradingAccount, nullptr, 0, 0);
-    // this->pTradeSpi->OnRspQryInvestorPosition()
+    while (1)
+    {
+        // 持仓情况
+        if (InvestorPosition.find(this->instrumentIDs[0]) == InvestorPosition.end())
+        {
+            CThostFtdcInvestorPositionField cf = CThostFtdcInvestorPositionField();
+            strcpy(cf.InstrumentID, this->instrumentIDs[0]);
+            InvestorPosition[this->instrumentIDs[0]] = cf;
+        }
+
+        this->pTradeSpi->OnRspQryInvestorPosition(&InvestorPosition[this->instrumentIDs[0]], nullptr, 0, 0);
+        std::this_thread::sleep_for(std::chrono::seconds(this->interval_time));
+    }
 }
+
+///报单录入请求
+int MockTraderApi::ReqOrderInsert(CThostFtdcInputOrderField *pInputOrder, int nRequestID)
+{
+    CThostFtdcInvestorPositionField cf = this->InvestorPosition[pInputOrder->InstrumentID];
+    double vol = pInputOrder->VolumeTotalOriginal;
+    double price = pInputOrder->LimitPrice;
+    if (pInputOrder->Direction == THOST_FTDC_D_Sell)
+        vol = -vol;
+
+    if (vol + cf.OpenVolume == 0)
+    {
+        cf.OpenAmount = 0;
+        cf.OpenVolume = 0;
+    }
+    else
+    {
+        cf.OpenAmount = (cf.OpenAmount * cf.OpenVolume + price * vol) / (cf.OpenVolume + vol);
+        cf.OpenVolume += vol;
+    }
+    this->InvestorPosition[pInputOrder->InstrumentID] = cf;
+    this->pTradeSpi->OnRspOrderInsert(pInputOrder, nullptr, nRequestID, 0);
+    return 0;
+};
 
 ///初始化
 ///@remark 初始化运行环境,只有调用后,接口才开始工作
