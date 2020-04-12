@@ -48,19 +48,16 @@ void MockTraderApi::TraderInit()
 
     // 查询投资者资金账户
     this->pTradeSpi->OnRspQryTradingAccount(this->pTradingAccount, nullptr, 0, 0);
-    while (1)
-    {
-        // 持仓情况
-        if (InvestorPosition.find(this->instrumentIDs[0]) == InvestorPosition.end())
-        {
-            CThostFtdcInvestorPositionField cf = CThostFtdcInvestorPositionField();
-            strcpy(cf.InstrumentID, this->instrumentIDs[0]);
-            InvestorPosition[this->instrumentIDs[0]] = cf;
-        }
 
-        this->pTradeSpi->OnRspQryInvestorPosition(&InvestorPosition[this->instrumentIDs[0]], nullptr, 0, 0);
-        std::this_thread::sleep_for(std::chrono::seconds(this->interval_time));
+    // 持仓情况
+    if (InvestorPosition.find(this->instrumentIDs[0]) == InvestorPosition.end())
+    {
+        CThostFtdcInvestorPositionField cf = CThostFtdcInvestorPositionField();
+        strcpy(cf.InstrumentID, this->instrumentIDs[0]);
+        InvestorPosition[this->instrumentIDs[0]] = cf;
     }
+
+    this->pTradeSpi->OnRspQryInvestorPosition(&InvestorPosition[this->instrumentIDs[0]], nullptr, 0, 0);
 }
 
 ///报单录入请求
