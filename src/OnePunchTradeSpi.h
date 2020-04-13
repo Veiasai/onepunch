@@ -3,6 +3,7 @@
 #include "CTP_API/inc/ThostFtdcTraderApi.h"
 #include <unordered_map>
 #include "TickToKlineHelper.h"
+#include "Timer.h"
 
 namespace sail { namespace onepunch { namespace ctp {
 
@@ -68,9 +69,10 @@ public:
 		char* gInvesterID,     // 投资者账户名
 		char* gInvesterPassword, // 投资者密码
 		char* gExchangeID,
-		char* g_pTradeInstrumentID) : g_KlineHash(g_KlineHash), gBrokerID(gBrokerID), 
+		char* g_pTradeInstrumentID,
+		timer::rdtscp_clock &t) : g_KlineHash(g_KlineHash), gBrokerID(gBrokerID), 
 			gInvesterID(gInvesterID), gInvesterPassword(gInvesterPassword),
-			gExchangeID(gExchangeID), g_pTradeInstrumentID(g_pTradeInstrumentID) {};
+			gExchangeID(gExchangeID), g_pTradeInstrumentID(g_pTradeInstrumentID), ctimer(t) {};
 
 	void setTradeUserApi(CThostFtdcTraderApi * g_pTradeUserApi) {this->g_pTradeUserApi = g_pTradeUserApi;};
 private:
@@ -87,6 +89,8 @@ private:
 	time_t lOrderOkTime;
 	std::unordered_map<std::string, TickToKlineHelper> & g_KlineHash;
 	CThostFtdcTraderApi * g_pTradeUserApi;
+
+	timer::rdtscp_clock &ctimer;
 private:
 	void changePwd();
 	void reqUserAuth(); // 认证请求

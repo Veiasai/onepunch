@@ -28,6 +28,21 @@ const char *MockTraderApi::GetTradingDay()
     return ctime(&now);
 }
 
+///请求查询投资者持仓
+int MockTraderApi::ReqQryInvestorPosition(CThostFtdcQryInvestorPositionField *pQryInvestorPosition, int nRequestID)
+{
+    // 持仓情况
+    if (InvestorPosition.find(this->instrumentIDs[0]) == InvestorPosition.end())
+    {
+        CThostFtdcInvestorPositionField cf = CThostFtdcInvestorPositionField();
+        strcpy(cf.InstrumentID, this->instrumentIDs[0]);
+        InvestorPosition[this->instrumentIDs[0]] = cf;
+    }
+
+    this->pTradeSpi->OnRspQryInvestorPosition(&InvestorPosition[this->instrumentIDs[0]], nullptr, 0, 0);
+    return 0;
+}
+
 void MockTraderApi::TraderInit()
 {
     // 初始化投资者账户

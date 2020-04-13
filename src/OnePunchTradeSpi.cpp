@@ -139,7 +139,8 @@ void OnePunchTradeSpi::OnRspQryTradingAccount(
 		std::cout << "当前保证金: " << pTradingAccount->CurrMargin << std::endl;
 		std::cout << "平仓盈亏： " << pTradingAccount->CloseProfit << std::endl;
 		// 请求查询投资者持仓
-		reqQueryInvestorPosition();
+		for(int i=0;i<1000;i++)
+			reqQueryInvestorPosition();
 	}
 }
 
@@ -149,6 +150,8 @@ void OnePunchTradeSpi::OnRspQryInvestorPosition(
 	int nRequestID,
 	bool bIsLast)
 {
+	ctimer.timer_ask_end();
+	ctimer.timer_ask_start();
 	if (!isErrorRspInfo(pRspInfo))
 	{
 		std::cout << "=====查询投资者持仓成功=====" << std::endl;
@@ -166,7 +169,13 @@ void OnePunchTradeSpi::OnRspQryInvestorPosition(
 		// 策略交易
 		std::cout << "=====开始进入策略交易=====" << std::endl;
 		if (loginFlag){
+			ctimer.timer_ask_end();
+			// ctimer.timer_ask_print();
+			ctimer.timer_ask_start();
 			TradeState* ts1 = new CTPState(this);
+			ctimer.timer_ask_end();
+			ctimer.timer_ask_print();
+			ctimer.init();
 			strategy::Strategy * s2 = new strategy::BaseStrategy(ts1,pInvestorPosition->InstrumentID);
 			s2->doStrategy(g_KlineHash);
 		}
@@ -363,6 +372,7 @@ void OnePunchTradeSpi::reqQueryInvestorPosition()
 	strcpy(postionReq.InstrumentID, g_pTradeInstrumentID);
 	static int requestID = 0; // 请求编号
 	std::this_thread::sleep_for(std::chrono::milliseconds(700)); // 有时候需要停顿一会才能查询成功
+	ctimer.timer_ask_start();
 	int rt = g_pTradeUserApi->ReqQryInvestorPosition(&postionReq, requestID);
 	if (!rt)
 		std::cout << ">>>>>>发送投资者持仓查询请求成功" << std::endl;

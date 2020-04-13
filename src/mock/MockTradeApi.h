@@ -193,7 +193,7 @@ public:
 	int ReqQryTrade(CThostFtdcQryTradeField *pQryTrade, int nRequestID){};
 
 	///请求查询投资者持仓
-	int ReqQryInvestorPosition(CThostFtdcQryInvestorPositionField *pQryInvestorPosition, int nRequestID){};
+	int ReqQryInvestorPosition(CThostFtdcQryInvestorPositionField *pQryInvestorPosition, int nRequestID);
 
 	///请求查询资金账户
 	int ReqQryTradingAccount(CThostFtdcQryTradingAccountField *pQryTradingAccount, int nRequestID){};

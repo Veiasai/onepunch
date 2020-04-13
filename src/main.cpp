@@ -22,12 +22,14 @@ int main()
 	parameter::Config *config = parameter::readConfigFromFile("./config/ctpconfig.cfg");
 	cout << *config;
 	std::unordered_map<std::string, TickToKlineHelper> g_KlineHash;
+	timer::rdtscp_clock clock(0,0);
 	ctp::OnePunchMdSpi *pMdUserSpi = new ctp::OnePunchMdSpi(g_KlineHash,
 															config->gBrokerID, config->gInvesterID, config->gInvesterPassword, config->gExchangeID,
 															config->gMdFrontAddr, config->g_pInstrumentID, config->instrumentNum); // 创建行情回调实例
 	ctp::OnePunchTradeSpi *pTradeSpi = new ctp::OnePunchTradeSpi(g_KlineHash,
 																 config->gBrokerID, config->gInvesterID, config->gInvesterPassword, config->gExchangeID,
-																 config->g_pTradeInstrumentID); // 创建交易回调实例
+																 config->g_pTradeInstrumentID,
+																 clock); // 创建交易回调实例
 	// 1:CTP 2:simulator
 	if (config->mode == 1)
 	{
@@ -77,7 +79,7 @@ int main()
 		{
 			kg->poll(1);
 			s1->doStrategy(g_KlineHash);
-			std::this_thread::sleep_for(std::chrono::seconds(config->interval));
+			std::this_thread::sleep_for(std::chrono::milliseconds(config->interval));
 		}
 	}
 	else if (config->mode == 3)

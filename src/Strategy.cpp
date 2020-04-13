@@ -4,6 +4,7 @@
 #include <vector>
 #include "Timer.h"
 #include <iostream>
+#include <fstream>
 
 namespace sail { namespace onepunch { namespace strategy {
 
@@ -31,7 +32,12 @@ void BaseStrategy::doStrategy(const std::unordered_map<std::string, TickToKlineH
     // timer end
     const auto duration = timer::rdtscp_clock::now() - start;
     ulong count = duration.count();
-    std::cout << "It took " << count / 2.099996 << " (ns)" << std::endl;
+    // std::cout << "It took " << count / 2.5 << " (ns)" << std::endl;
+    std::ofstream outFile;
+    outFile.open("sout", std::ios::app);
+    outFile << count / 2.5 << ",";
+    
+    outFile << std::endl;
 }
 
 inline void BaseStrategy::last3Stategy(double price1, double price2, double price3, TThostFtdcVolumeType volume)
